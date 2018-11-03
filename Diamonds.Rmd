@@ -1,0 +1,28 @@
+---
+title: "Diamond Data Visualization"
+---
+```{r}
+
+library(ggplot2)
+data(diamonds)
+names(diamonds)
+```
+
+```{r}
+summary(diamonds)
+```
+
+```{r}
+qplot(data = diamonds, x = color, color = I('black'), fill = I('#F79420'),
+      xlab = 'Color', ylab = 'Number of Diamonds')
+```
+```{r}
+qplot(data = diamonds, x = price, color = I('black'), fill = I('#F79420'), 
+      xlab = 'Price', ylab = 'Number of Diamonds')  +
+  ggtitle('Diamond Price') + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+```{r}
+summary(diamonds$price)
+```
+
