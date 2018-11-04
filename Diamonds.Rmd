@@ -1,5 +1,5 @@
 ---
-title: "Diamond Data Visualization"
+title: "Diamond Data Visualization with R"
 ---
 ```{r}
 
@@ -11,11 +11,12 @@ names(diamonds)
 ```{r}
 summary(diamonds)
 ```
-
+### Representing the best Color
 ```{r}
 qplot(data = diamonds, x = color, color = I('black'), fill = I('#F79420'),
       xlab = 'Color', ylab = 'Number of Diamonds')
 ```
+### Creating a histogram of the price of all the diamonds in the diamond data set.
 ```{r}
 qplot(data = diamonds, x = price, color = I('black'), fill = I('#F79420'), 
       xlab = 'Price', ylab = 'Number of Diamonds')  +
@@ -25,4 +26,77 @@ qplot(data = diamonds, x = price, color = I('black'), fill = I('#F79420'),
 ```{r}
 summary(diamonds$price)
 ```
+### How many diamonds cost less than $500?
+```{r}
+nrow(subset(diamonds, price < 500))
+```
+### How many diamonds cost less than $250?
+```{r}
+nrow(subset(diamonds, price < 250))
+```
+### How many diamonds cost $15000 or more?
+```{r}
+nrow(subset(diamonds, price <= 15000))
+```
+### Changing the transparency of the points and making the x-axis every 2 units
+```{r}
+ ggplot(diamonds) +
+  geom_histogram( aes(x = price), color = I('black'), fill = I('#F79420'), 
+      xlab = 'Price', ylab = 'Number of Diamonds')  +
+  ggtitle('Diamond Price') + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  coord_cartesian(xlim = c(0,19000))
+```
+
+### Breaking down the main price histogram to five histograms in separate panels.
+```{r}
+ ggplot(diamonds) +
+  geom_histogram( aes(x = price), color = I('black'), fill = I('#F79420'), 
+      xlab = 'Price', ylab = 'Number of Diamonds')  +
+  ggtitle('Diamond Price') + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  coord_cartesian(xlim = c(0,19000)) +
+  facet_grid(. ~ cut)
+```
+
+### Investigate the price of diamonds using box plots
+
+```{r}
+ggplot(diamonds) +
+  geom_boxplot(aes(x = color,  y = price, fill = color)) +
+   ggtitle("Diamonds Price by Color.") +
+   theme(plot.title = element_text(hjust = 0.5))
+```
+
+### what is the price range for the middle 50% of diamonds with color D?
+### what is the price range for the middle 50% of diamonds with color J?
+### what is the IQR for the diamonds with best color?
+### what is the IQR for the diamonds with worst color?
+
+```{r}
+summary(diamonds$price[diamonds$color == 'D'])
+summary(diamonds$price[diamonds$color == 'J'])
+IQR(diamonds$price[diamonds$color == "D"])
+IQR(diamonds$price[diamonds$color == "J"])
+```
+
+### Investigating the price per carat of diamonds across the different colors of diamonds using boxplots.
+
+```{r}
+ggplot(diamonds) + 
+  geom_boxplot(aes(x = color,  y = price/carat, fill = color)) +
+   ggtitle("Diamonds Price by Color.")
+
+```
+### investigate the weight of the diamonds using frequency polygon.
+### what carat size has a count greater than 2000?
+
+```{r}
+
+ggplot(diamonds) + geom_freqpoly(aes(x = carat), binwidth = 0.5) +
+scale_x_continuous(limits = c(0,6), breaks = seq(0,6,0.1))
+
+
+```
+
 
