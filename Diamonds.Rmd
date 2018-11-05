@@ -1,5 +1,6 @@
 ---
 title: "Diamond Data Visualization with R"
+output: pdf_document
 ---
 ```{r}
 
