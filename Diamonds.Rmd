@@ -99,4 +99,123 @@ scale_x_continuous(limits = c(0,6), breaks = seq(0,6,0.1))
 
 ```
 
+### Create a scatterplot of price vs x
+```{r}
+ggplot(data = diamonds) +
+       xlab('Length in mm') +
+       ylab('Price in USD') + 
+  geom_point(aes(x = x, y = price),color = 'blue', alpha = 1/10)
+```
+
+### Correlation between price and x, between price and y, between price and z
+```{r}
+cor.test(diamonds$price,diamonds$x)
+```
+
+```{r}
+cor.test(diamonds$price,diamonds$y) 
+```
+
+```{r}
+cor.test(diamonds$price,diamonds$z)
+```
+
+### Create a scatterplot of price vs depth
+
+```{r}
+ggplot(data = diamonds) +
+       xlab('Depth in mm') +
+       ylab('Price in USD') + 
+  geom_point(aes(x = depth, y = price),alpha=1/100, color = 'blue') +
+  scale_x_continuous(limits = c(50, 75),
+                     breaks = seq(50,75, 2))
+```
+### Correlation between price and depth
+```{r}
+cor.test(diamonds$price,diamonds$depth)
+```
+
+### Creating a scatterplot of price vs carat and omit the top 1% of price and carat values.
+
+```{r}
+ggplot( data = diamonds) +
+       xlab('Carat') +
+       ylab('Price in USD') + 
+  geom_point(aes(x = carat, y = price),color = 'blue') +
+  xlim(0, quantile(diamonds$carat, probs = 0.99)) +   # 99% percentile on x variable
+  ylim(0, quantile(diamonds$price, probs = 0.99))
+```
+
+### Create a scatterplot of price vs volume (xyz)
+
+```{r}
+diamonds$volume <- diamonds$x * diamonds$y * diamonds$z
+
+ggplot( data = diamonds) +
+       xlab('Volume (mm3)') +
+       ylab('Price in USD') + 
+  geom_point(aes(x = volume, y = price),color = 'blue') 
+```
+
+### number of diamonds with volume=0
+
+```{r}
+dim(diamonds[diamonds$volume == 0,])
+```
+
+### Correlation between price vs volume (xyz)
+### Exclude diamonds with volume=0 and volume >= 800
+
+```{r}
+temp_df <- diamonds[ diamonds$volume > 0 & diamonds$volume <= 800 , ]
+
+cor.test(temp_df$price,temp_df$volume)
+```
+
+### Create a scatterplot of price vs volume (xyz)
+```{r}
+temp_df <- diamonds[ diamonds$volume > 0 & diamonds$volume <= 800 , ]
+
+ggplot( data = temp_df) +
+       xlab('Volume (mm3)') +
+       ylab('Price in USD') + 
+  geom_point(aes(x = volume, y = price),color = 'blue',alpha=1/100) +
+  geom_smooth(aes(x = volume, y = price))
+```
+### Create a new data frame containing info on diamonds by clarity
+
+```{r}
+library(dplyr)
+
+clarity_groups  <- group_by(diamonds,clarity)     # first groups data by clarity
+
+diamondsByClarity <- summarise(clarity_groups,                 # then summarizes
+          mean_price = mean(price),                    # and creates new variables
+          median_price = median(price),
+          min_price = min(price),
+          max_price = max(price),
+          n = n()                                      # number of items in each group
+          )
+
+diamondsByClarity
+```
+### Create two bar plots : mean_price vs. clarity, mean_price vs. color
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+diamonds_by_clarity <- group_by(diamonds, clarity)
+diamonds_mp_by_clarity <- summarise(diamonds_by_clarity, mean_price = mean(price))
+p1 <- ggplot( data = diamonds_mp_by_clarity) +
+  geom_bar(aes(x = clarity, y = mean_price),stat="identity",color = 'black', fill = 'orange')
+
+diamonds_by_color <- group_by(diamonds, color)
+diamonds_mp_by_color <- summarise(diamonds_by_color, mean_price = mean(price))
+p2 <- ggplot( data = diamonds_mp_by_color) +
+  geom_bar(aes(x = color, y = mean_price),stat="identity",color = 'black',fill = 'blue')
+
+library(gridExtra)
+grid.arrange(p1,p2,ncol=1)
+```
 
